@@ -23,6 +23,16 @@ export function MainNavbar({
       active: pathName === `/${params.storeId}/billboards`,
     },
     {
+      href: `/${params.storeId}/categories`,
+      label: "Categories",
+      active: pathName === `/${params.storeId}/categories`,
+    },
+    {
+      href: `/${params.storeId}/sizes`,
+      label: "Sizes",
+      active: pathName === `/${params.storeId}/sizes`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Settings",
       active: pathName === `/${params.storeId}/settings`,

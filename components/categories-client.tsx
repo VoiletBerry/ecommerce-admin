@@ -5,17 +5,16 @@ import Heading from "./Heading";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { useParams, useRouter } from "next/navigation";
-
-import { BillboardColumn, columnsBillboard } from "./colums-billboard";
 import { DataTable } from "./data-table";
-
 import ApiList from "./api-list";
 
-interface BillboardClientProps {
-  data: BillboardColumn[];
+import { CategoryColumn, columnsCategories } from "./colums-category";
+
+interface CategoryClientProps {
+  data: CategoryColumn[];
 }
 
-const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
+const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
@@ -23,11 +22,11 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Billboard (${data.length})`}
-          description="Manage billboard for your store"
+          title={`Categories (${data.length})`}
+          description="Manage Categories for your store"
         />
         <Button
-          onClick={() => router.push(`/${params.storeId}/billboards/new`)}
+          onClick={() => router.push(`/${params.storeId}/categories/new`)}
         >
           <Plus className="mr-2 h-4 w-4" />
           Add New
@@ -35,18 +34,18 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       </div>
       <Separator />
 
-      <DataTable columns={columnsBillboard} data={data} searchItem="label" />
+      <DataTable columns={columnsCategories} data={data} searchItem="name" />
 
       <Heading title="Api's" description="API calls for billboards" />
       <Separator />
       <ApiList
-        dataId="billboardId"
-        dataName="billboards"
-        title="BILLBORDS"
-        titleById="BILLBOARD"
+        dataId="categoryId"
+        dataName="categories"
+        title="CATEGORIES"
+        titleById="CATEGORY"
       />
     </>
   );
 };
 
-export default BillboardClient;
+export default CategoryClient;
