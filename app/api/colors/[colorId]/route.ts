@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { sizeId: string } }
+  { params }: { params: { colorId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -43,9 +43,9 @@ export async function PATCH(
       return NextResponse.json("Unauthorized", { status: 403 });
     }
 
-    const size = await prismadb.size.updateMany({
+    const color = await prismadb.color.updateMany({
       where: {
-        id: params.sizeId,
+        id: params.colorId,
       },
       data: {
         name,
@@ -53,16 +53,16 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(size);
+    return NextResponse.json(color);
   } catch (error) {
-    console.log("API_PATCH_SIZEID", error);
+    console.log("API_PATCH_COLORID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { sizeId: string } }
+  { params }: { params: { colorId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -86,35 +86,35 @@ export async function DELETE(
       return NextResponse.json("Unauthorized", { status: 403 });
     }
 
-    const size = await prismadb.size.deleteMany({
+    const color = await prismadb.color.deleteMany({
       where: {
-        id: params.sizeId,
+        id: params.colorId,
       },
     });
 
-    return NextResponse.json(size);
+    return NextResponse.json(color);
   } catch (error) {
-    console.log("API_Delete_SIZEID", error);
+    console.log("API_Delete_COLORID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: { sizeId: string } }
+  { params }: { params: { colorId: string } }
 ) {
   try {
     const body = await req.json();
 
     const { storeId } = body;
 
-    const size = await prismadb.size.findMany({
+    const color = await prismadb.color.findMany({
       where: {
-        id: params.sizeId,
+        id: params.colorId,
       },
     });
 
-    return NextResponse.json(size);
+    return NextResponse.json(color);
   } catch (error) {
     console.log("API_GET_SIZEID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });

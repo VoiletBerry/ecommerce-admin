@@ -2,7 +2,10 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
-export async function PATCH(req: Request) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { categoryId: string } }
+) {
   try {
     const { userId } = auth();
 
@@ -15,7 +18,6 @@ export async function PATCH(req: Request) {
     const {
       data: { name, billboardId },
       storeId,
-      categoryId,
     } = body;
 
     if (!name) {
@@ -26,8 +28,8 @@ export async function PATCH(req: Request) {
       return NextResponse.json("Billboard Id is Required", { status: 400 });
     }
 
-    if (!categoryId) {
-      return NextResponse.json("Billboard Id is Required", { status: 400 });
+    if (!params.categoryId) {
+      return NextResponse.json("category Id is Required", { status: 400 });
     }
 
     if (!storeId) {
@@ -49,7 +51,7 @@ export async function PATCH(req: Request) {
 
     const category = await prismadb.category.updateMany({
       where: {
-        id: categoryId,
+        id: params.categoryId,
       },
       data: {
         name,

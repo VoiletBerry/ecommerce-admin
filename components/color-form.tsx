@@ -1,8 +1,7 @@
 "use client";
 
-import { useOrign } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Billboard } from "@prisma/client";
+import { Color } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,58 +20,57 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import ImageUpload from "./image-upload";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-interface BillboardProps {
-  initialData: Billboard | null;
+interface ColorProps {
+  initialData: Color | null;
 }
 
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  name: z.string().min(1),
+  value: z.string().min(4).regex(/^#/, {
+    message: "String must be a valid hex code",
+  }),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>;
+type ColorFormValues = z.infer<typeof formSchema>;
 
-const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
+const ColorForm: React.FC<ColorProps> = ({ initialData }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
 
-  const title = initialData ? "Edit Billboard" : "Create Billboard";
-  const description = initialData ? "Edit a Billboard" : "Add a new Billboard";
-  const toastMessage = initialData ? "Billboard updated" : "Billboard created";
+  const title = initialData ? "Edit Color" : "Add  Color";
+  const description = initialData ? "Edit a Color" : "Add a new Color";
   const action = initialData ? "Save Changes" : "Create";
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<ColorFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      label: "",
-      imageUrl: "",
+      name: "",
+      value: "",
     },
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: ColorFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/billboards/${params.billboardId}`, {
+        await axios.patch(`/api/colors/${params.colorId}`, {
           data,
           storeId: params.storeId,
-          billboardId: params.billboardId,
         });
       } else {
-        await axios.post(`/api/billboards`, {
+        await axios.post(`/api/colors`, {
           data,
           storeId: params.storeId,
         });
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success("Billboard Updated");
+      router.push(`/${params.storeId}/colors`);
+      toast.success("Color Updated");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -83,12 +81,12 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/billboards/${params.billboardId}`, {
-        data: { storeId: params.storeId, billboardId: params.billboardId },
+      await axios.delete(`/api/colors/${params.colorId}`, {
+        data: { storeId: params.storeId },
       });
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success("Billboard Removed");
+      router.push(`/${params.storeId}/colors`);
+      toast.success("Color Removed");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -123,38 +121,42 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          <FormField
-            control={form.control}
-            name="imageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image Upload</FormLabel>
-                <FormControl>
-                  <ImageUpload
-                    disabled={loading}
-                    type="billboard"
-                    onChange={(url) => field.onChange(url)}
-                    onRemove={() => field.onChange("")}
-                    value={field.value ? [field.value] : []}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <div className="grid grid-cols-3 gap-3">
             <FormField
               control={form.control}
-              name="label"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Billboard Label"
+                      placeholder="Color name"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Value</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-x-4">
+                      <Input
+                        disabled={loading}
+                        placeholder="Color value"
+                        {...field}
+                      />
+                      <div
+                        className="border p-4 rounded-md"
+                        style={{ backgroundColor: field.value }}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -170,4 +172,4 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
   );
 };
 
-export default BillboardForm;
+export default ColorForm;
