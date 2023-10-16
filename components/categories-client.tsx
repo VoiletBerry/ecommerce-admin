@@ -39,6 +39,7 @@ const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
       <Heading title="Api's" description="API calls for billboards" />
       <Separator />
       <ApiList
+        storeId={`${params.storeId}`}
         dataId="categoryId"
         dataName="categories"
         title="CATEGORIES"

@@ -2,7 +2,10 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const { userId } = auth();
 
@@ -12,12 +15,9 @@ export async function POST(req: Request) {
       return NextResponse.json("Unauthenticated", { status: 401 });
     }
 
-    const {
-      storeId,
-      data: { label, imageUrl },
-    } = body;
+    const { label, imageUrl } = body;
 
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("StoreId is Required", { status: 400 });
     }
 
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     const storeConfirmation = await prismadb.store.findFirst({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       data: {
         label,
         imageUrl,
-        storeId,
+        storeId: params.storeId,
       },
     });
 
@@ -55,19 +55,18 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
-    const body = await req.json();
-
-    const { storeId } = body;
-
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Unauthenticated", { status: 400 });
     }
 
     const billboards = await prismadb.billboard.findMany({
       where: {
-        storeId,
+        storeId: params.storeId,
       },
     });
 

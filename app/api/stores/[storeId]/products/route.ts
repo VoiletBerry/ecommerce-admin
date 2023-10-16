@@ -2,7 +2,10 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const { userId } = auth();
 
@@ -13,20 +16,17 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-      storeId,
-      data: {
-        name,
-        price,
-        images,
-        categoryId,
-        colorId,
-        sizeId,
-        isFeatured,
-        isArchived,
-      },
+      name,
+      price,
+      images,
+      categoryId,
+      colorId,
+      sizeId,
+      isFeatured,
+      isArchived,
     } = body;
 
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
 
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     const storeConfirmation = await prismadb.store.findUnique({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
       data: {
         name,
         price,
-        storeId,
+        storeId: params.storeId,
         categoryId,
         colorId,
         sizeId,
@@ -90,7 +90,10 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const { searchParams } = new URL(req.url);
 
@@ -99,16 +102,13 @@ export async function GET(req: Request) {
     const sizeId = searchParams.get("sizeyId") || undefined;
     const isFeatured = searchParams.get("isFeatured") || undefined;
 
-    const body = await req.json();
-    const { storeId } = body;
-
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
 
     const product = await prismadb.product.findMany({
       where: {
-        storeId,
+        storeId: params.storeId,
         categoryId,
         colorId,
         sizeId,

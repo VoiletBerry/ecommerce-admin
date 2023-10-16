@@ -37,6 +37,7 @@ const ColorClient: React.FC<SizeClientProps> = ({ data }) => {
       <Heading title="Api's" description="API calls for colors" />
       <Separator />
       <ApiList
+        storeId={`${params.storeId}`}
         dataId="colorId"
         dataName="colors"
         title="COLORS"

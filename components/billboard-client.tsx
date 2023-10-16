@@ -40,6 +40,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       <Heading title="Api's" description="API calls for billboards" />
       <Separator />
       <ApiList
+        storeId={`${params.storeId}`}
         dataId="billboardId"
         dataName="billboards"
         title="BILLBORDS"

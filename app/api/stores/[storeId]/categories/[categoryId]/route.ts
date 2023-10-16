@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: { categoryId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -15,10 +15,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const {
-      data: { name, billboardId },
-      storeId,
-    } = body;
+    const { name, billboardId } = body;
 
     if (!name) {
       return NextResponse.json("Name is Required", { status: 400 });
@@ -32,7 +29,7 @@ export async function PATCH(
       return NextResponse.json("category Id is Required", { status: 400 });
     }
 
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("s=Store Id Id is Required", {
         status: 400,
       });
@@ -40,7 +37,7 @@ export async function PATCH(
 
     const storeConfirmation = await prismadb.store.findFirst({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -66,19 +63,21 @@ export async function PATCH(
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { categoryId: string; storeId: string } }
+) {
   try {
-    const body = await req.json();
-
-    const { categoryId } = body;
-
-    if (!categoryId) {
+    if (!params.categoryId) {
       return NextResponse.json("Category Id is Required", { status: 401 });
     }
 
     const category = await prismadb.category.findUnique({
       where: {
-        id: categoryId,
+        id: params.categoryId,
+      },
+      include: {
+        billboard: true,
       },
     });
 
@@ -91,7 +90,7 @@ export async function GET(req: Request) {
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: { categoryId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();

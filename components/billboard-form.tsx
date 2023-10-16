@@ -1,6 +1,5 @@
 "use client";
 
-import { useOrign } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Billboard } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
@@ -44,7 +43,6 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
 
   const title = initialData ? "Edit Billboard" : "Create Billboard";
   const description = initialData ? "Edit a Billboard" : "Add a new Billboard";
-  const toastMessage = initialData ? "Billboard updated" : "Billboard created";
   const action = initialData ? "Save Changes" : "Create";
 
   const form = useForm<BillboardFormValues>({
@@ -59,16 +57,12 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/billboards/${params.billboardId}`, {
-          data,
-          storeId: params.storeId,
-          billboardId: params.billboardId,
-        });
+        await axios.patch(
+          `/api/stores/${params.storeId}/billboards/${params.billboardId}`,
+          data
+        );
       } else {
-        await axios.post(`/api/billboards`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.post(`/api/stores/${params.storeId}/billboards`, data);
       }
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
@@ -83,9 +77,9 @@ const BillboardForm: React.FC<BillboardProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/billboards/${params.billboardId}`, {
-        data: { storeId: params.storeId, billboardId: params.billboardId },
-      });
+      await axios.delete(
+        `/api/stores/${params.storeId}/billboards/${params.billboardId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
       toast.success("Billboard Removed");

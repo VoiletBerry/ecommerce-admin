@@ -124,7 +124,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
       {orign === "" ? null : (
         <ApiAlert
           title="NEXT_PUBLIC_API_URL"
-          link={`${orign}/api/${params.storeId}`}
+          link={`${orign}/api/stores/${params.storeId}`}
           variant="admin"
         />
       )}

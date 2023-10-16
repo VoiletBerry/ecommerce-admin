@@ -2,12 +2,14 @@
 
 import { useOrign } from "@/hooks/use-origin";
 import ApiAlert from "./api-alert";
+import { useSearchParams } from "next/navigation";
 
 interface ApiListProps {
   dataName: string;
   dataId: string;
   title: string;
   titleById: string;
+  storeId: string;
 }
 
 const ApiList: React.FC<ApiListProps> = ({
@@ -15,10 +17,11 @@ const ApiList: React.FC<ApiListProps> = ({
   dataId,
   title,
   titleById,
+  storeId,
 }) => {
   const orign = useOrign();
 
-  const baseurl = `${orign}/api/${dataName}`;
+  const baseurl = `${orign}/api/stores/${storeId}/${dataName}`;
 
   return (
     <>

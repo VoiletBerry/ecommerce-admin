@@ -88,18 +88,15 @@ const ProductForm: React.FC<ProductProps> = ({
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/products/${params.productId}`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.patch(
+          `/api/stores/${params.storeId}/products/${params.productId}`,
+          data
+        );
         router.refresh();
         router.push(`/${params.storeId}/products`);
         toast.success("Product Updated");
       } else {
-        await axios.post(`/api/products`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.post(`/api/stores/${params.storeId}/products`, data);
         router.refresh();
         router.push(`/${params.storeId}/products`);
         toast.success("Product Created");
@@ -114,9 +111,9 @@ const ProductForm: React.FC<ProductProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/products/${params.productId}`, {
-        data: { storeId: params.storeId },
-      });
+      await axios.delete(
+        `/api/stores/${params.storeId}/products/${params.productId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/products`);
       toast.success(" Removed");

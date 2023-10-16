@@ -67,15 +67,10 @@ const CategoryForm: React.FC<BillboardProps> = ({
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/categories/${params.categoryId}`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.patch(
+          `/api/stores/${params.storeId}/categories/${params.categoryId}`,data);
       } else {
-        await axios.post(`/api/categories`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.post(`/api/stores/${params.storeId}/categories`, data);
       }
       router.refresh();
       router.push(`/${params.storeId}/categories`);
@@ -90,9 +85,9 @@ const CategoryForm: React.FC<BillboardProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/categories/${params.categoryId}`, {
-        data: { storeId: params.storeId },
-      });
+      await axios.delete(
+        `/api/stores/${params.storeId}/categories/${params.categoryId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/categories`);
       toast.success("Category Removed");

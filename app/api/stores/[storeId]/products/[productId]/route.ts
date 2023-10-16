@@ -4,16 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string; storeId: string } }
 ) {
   try {
-    const body = await req.json();
-    const { storeId } = body;
-
-    if (!storeId) {
-      return NextResponse.json("Store Id is Required", { status: 400 });
-    }
-
     if (!params.productId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
@@ -39,7 +32,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -51,20 +44,17 @@ export async function PATCH(
     const body = await req.json();
 
     const {
-      storeId,
-      data: {
-        name,
-        price,
-        images,
-        categoryId,
-        colorId,
-        sizeId,
-        isFeatured,
-        isArchived,
-      },
+      name,
+      price,
+      images,
+      categoryId,
+      colorId,
+      sizeId,
+      isFeatured,
+      isArchived,
     } = body;
 
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
 
@@ -94,7 +84,7 @@ export async function PATCH(
 
     const storeConfirmation = await prismadb.store.findUnique({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -110,7 +100,7 @@ export async function PATCH(
       data: {
         name,
         price,
-        storeId,
+        storeId: params.storeId,
         colorId,
         categoryId,
         sizeId,
@@ -144,13 +134,10 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string; storeId: string } }
 ) {
   try {
-    const body = await req.json();
-    const { storeId } = body;
-
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
 

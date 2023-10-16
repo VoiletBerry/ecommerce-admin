@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { colorId: string } }
+  { params }: { params: { sizeId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -15,12 +15,9 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const {
-      storeId,
-      data: { name, value },
-    } = body;
+    const { name, value } = body;
 
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("storeId is Required", { status: 401 });
     }
 
@@ -34,7 +31,7 @@ export async function PATCH(
 
     const storeConfirmation = await prismadb.store.findFirst({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -43,9 +40,9 @@ export async function PATCH(
       return NextResponse.json("Unauthorized", { status: 403 });
     }
 
-    const color = await prismadb.color.updateMany({
+    const size = await prismadb.size.updateMany({
       where: {
-        id: params.colorId,
+        id: params.sizeId,
       },
       data: {
         name,
@@ -53,16 +50,16 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(color);
+    return NextResponse.json(size);
   } catch (error) {
-    console.log("API_PATCH_COLORID", error);
+    console.log("API_PATCH_SIZEID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { colorId: string } }
+  { params }: { params: { sizeId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -71,13 +68,9 @@ export async function DELETE(
       return NextResponse.json("Unauthenticated", { status: 401 });
     }
 
-    const body = await req.json();
-
-    const { storeId } = body;
-
     const storeConfirmation = await prismadb.store.findFirst({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -86,35 +79,31 @@ export async function DELETE(
       return NextResponse.json("Unauthorized", { status: 403 });
     }
 
-    const color = await prismadb.color.deleteMany({
+    const size = await prismadb.size.deleteMany({
       where: {
-        id: params.colorId,
+        id: params.sizeId,
       },
     });
 
-    return NextResponse.json(color);
+    return NextResponse.json(size);
   } catch (error) {
-    console.log("API_Delete_COLORID", error);
+    console.log("API_Delete_SIZEID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: { colorId: string } }
+  { params }: { params: { sizeId: string; storeId: string } }
 ) {
   try {
-    const body = await req.json();
-
-    const { storeId } = body;
-
-    const color = await prismadb.color.findMany({
+    const size = await prismadb.size.findMany({
       where: {
-        id: params.colorId,
+        id: params.sizeId,
       },
     });
 
-    return NextResponse.json(color);
+    return NextResponse.json(size);
   } catch (error) {
     console.log("API_GET_SIZEID", error);
     return NextResponse.json("Internal Server Error", { status: 500 });

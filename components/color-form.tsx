@@ -58,15 +58,12 @@ const ColorForm: React.FC<ColorProps> = ({ initialData }) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/colors/${params.colorId}`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.patch(
+          `/api/stores/${params.storeId}/colors/${params.colorId}`,
+          data
+        );
       } else {
-        await axios.post(`/api/colors`, {
-          data,
-          storeId: params.storeId,
-        });
+        await axios.post(`/api/stores/${params.storeId}/colors`, data);
       }
       router.refresh();
       router.push(`/${params.storeId}/colors`);
@@ -81,9 +78,9 @@ const ColorForm: React.FC<ColorProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/colors/${params.colorId}`, {
-        data: { storeId: params.storeId },
-      });
+      await axios.delete(
+        `/api/stores/${params.storeId}/colors/${params.colorId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/colors`);
       toast.success("Color Removed");

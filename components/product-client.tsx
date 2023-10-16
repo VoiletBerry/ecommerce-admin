@@ -39,9 +39,10 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
       <Separator />
       <ApiList
         dataId="productId"
-        dataName="productss"
+        dataName="products"
         title="PRODUCTS"
         titleById="PRODUCT"
+        storeId={`${params.storeId}`}
       />
     </>
   );

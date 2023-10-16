@@ -2,7 +2,10 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const { userId } = auth();
 
@@ -12,10 +15,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const {
-      data: { name, billboardId },
-      storeId,
-    } = body;
+    const { name, billboardId } = body;
 
     if (!name) {
       return NextResponse.json("Name is Required", { status: 400 });
@@ -25,13 +25,13 @@ export async function POST(req: Request) {
       return NextResponse.json("Billboard Id is Required", { status: 400 });
     }
 
-    if (!storeId) {
-      return NextResponse.json("s=Store Id Id is Required", { status: 400 });
+    if (!params.storeId) {
+      return NextResponse.json("Store Id Id is Required", { status: 400 });
     }
 
     const storeConfirmation = await prismadb.store.findFirst({
       where: {
-        id: storeId,
+        id: params.storeId,
         userId,
       },
     });
@@ -44,30 +44,29 @@ export async function POST(req: Request) {
       data: {
         name,
         billboardId,
-        storeId,
+        storeId: params.storeId,
       },
     });
 
     return NextResponse.json(category);
   } catch (error) {
-    console.log("[QPI_CATEGORIES_POST]", error);
+    console.log("[API_CATEGORIES_POST]", error);
     NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
-
-export async function GET(req: Request) {
+ 
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
-    const body = await req.json();
-
-    const { storeId } = body;
-
-    if (!storeId) {
+    if (!params.storeId) {
       return NextResponse.json("Store Id is Required", { status: 400 });
     }
 
     const categories = await prismadb.category.findMany({
       where: {
-        storeId,
+        storeId: params.storeId,
       },
       include: {
         billboard: true,

@@ -1,10 +1,8 @@
 "use client";
 
-
 import Heading from "./Heading";
 import { Separator } from "./ui/separator";
 import { DataTable } from "./data-table";
-import ApiList from "./api-list";
 import { OrderColumn, columnsOrders } from "./colums-order";
 
 interface OrderClientProps {
@@ -22,7 +20,7 @@ const OrderClient: React.FC<OrderClientProps> = ({ data }) => {
       </div>
       <Separator />
 
-      <DataTable columns={columnsOrders} data={data} searchItem="name" />
+      <DataTable columns={columnsOrders} data={data} searchItem="products" />
     </>
   );
 };
